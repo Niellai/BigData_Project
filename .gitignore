@@ -122,3 +122,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+backup_1.zip
+
+TweetCollector1.7z
+
+Live_tweet.py
+
+*.csv
