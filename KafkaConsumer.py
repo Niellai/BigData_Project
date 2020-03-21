@@ -29,7 +29,7 @@ class KafkaConsumer(object):
         #     group_id='my-group',
         #     value_deserializer=lambda x: loads(x.decode('utf-8')))
 
-        # self.hdfs = pa.hdfs.connect(host='localhost', port=9000)
+        # self.HDFS = pa.HDFS.connect(host='localhost', port=9000)
         self.hdfs = HDFileSystem(host='localhost', port=9000)
         self.destination_path = ""
         self.dest_path_tweet = '/user/BigData/tweet_data'
@@ -39,10 +39,10 @@ class KafkaConsumer(object):
 
     def write_to_file(self, source_df, data_type="tweet"):
         """
-        Write collected data to hdfs.
+        Write collected data to HDFS.
 
         If file is collected on the same day, method will retrieve the previous dataframe
-        combine it and write back to hdfs.
+        combine it and write back to HDFS.
 
         Ref:    https://hdfs3.readthedocs.io/en/latest/
 
@@ -59,7 +59,7 @@ class KafkaConsumer(object):
                 elif "corona" in str(data_type).lower():
                     self.destination_path = self.dest_path_corona
                 else:
-                    raise Exception("Invalid data type, unsure where to storage in hdfs.")
+                    raise Exception("Invalid data type, unsure where to storage in HDFS.")
 
                 # write to temp storage
                 file_name = 'temp.csv'
@@ -76,10 +76,10 @@ class KafkaConsumer(object):
                         source_df = pd.concat([source_df, exist_df])
                         self.hdfs.rm(hdfs_path)  # remove and write a new one
 
-                # pushing to hdfs
+                # pushing to HDFS
                 self.hdfs.put(temp_path, hdfs_path)
 
-                print("Write to hdfs completed: ", source_df.shape)
+                print("Write to HDFS completed: ", source_df.shape)
         except Exception as e:
             print(str(e))
 

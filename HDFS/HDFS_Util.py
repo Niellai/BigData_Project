@@ -29,7 +29,7 @@ class HDFS_Util(object):
 
         :param data_type: in string only accept 'tweet', 'rss', 'corona'
 
-        :return: list of files stored in hdfs
+        :return: list of files stored in HDFS
         """
         if "tweet" == str(data_type).lower():
             self.destination_path = self.dest_path_tweet
