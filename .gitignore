@@ -127,6 +127,6 @@ backup_1.zip
 
 TweetCollector1.7z
 
-Live_tweet.py
+Kafka/TweetLive.py
 
 *.csv

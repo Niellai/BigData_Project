@@ -6,7 +6,12 @@ from hdfs3 import HDFileSystem
 import pandas as pd
 
 
-class HDFS_Util(object):
+class HDFSUtil(object):
+    """
+    Reference: https://hdfs3.readthedocs.io/en/latest/api.html
+
+    HDFS utility handles read, write, delete files
+    """
 
     def __init__(self):
         self.hdfs = HDFileSystem(host='localhost', port=9000)
@@ -22,8 +27,10 @@ class HDFS_Util(object):
         self.hdfs_types = {'tweet': self.dest_path_tweet, 'rss': self.dest_path_rss, 'corona': self.dest_path_corona}
         self.import_types = {'tweet': self.import_path_tweet, 'rss': self.import_path_rss,
                              'corona': self.import_path_corona}
+        self.temp_types = {'tweet': "TempData/temp_tweet.csv", "rss": "TempData/temp_rss.csv",
+                           "corona": "TempData/temp_corona.csv"}
 
-    def get_files_from_hdfs(self, data_type):
+    def get_files(self, data_type):
         """
         Return a list of files contain inside HDFS.
 
@@ -53,9 +60,9 @@ class HDFS_Util(object):
         """
         for data_type in self.import_types.keys():
             try:
-                hdfs_files = self.get_files_from_hdfs(data_type)
+                hdfs_files = self.get_files(data_type)
                 local_folder = self.import_types[data_type]
-                onlyfiles = [f for f in listdir(local_folder) if isfile(join(local_folder, f))]
+                onlyfiles = [f for f in listdir(local_folder) if isfile(join(local_folder, f) and ".~" not in f)]
 
                 for file in onlyfiles:
                     try:
@@ -74,7 +81,7 @@ class HDFS_Util(object):
             except Exception as e:
                 print(str(e))
 
-    def delete_file_from_hdfs(self, file_name, data_type=None):
+    def delete_file(self, file_name, data_type=None):
         """
         Attempt to delete file in HDFS by file name.
 
@@ -110,7 +117,18 @@ class HDFS_Util(object):
             print(str(e))
             return False
 
-    def read_file_from_hdfs(self, file_name):
+    def is_file_exist(self, file_name):
+        try:
+            for data_type in self.hdfs_types.keys():
+                hdfs_path = self.hdfs_types[data_type]
+                hdfs_path = os.path.join(hdfs_path, file_name)
+                if self.hdfs.exists(hdfs_path):
+                    return True
+            return False
+        except Exception as e:
+            print(str(e))
+
+    def read_file(self, file_name):
         """
         Return the DataFrame load from HDFS
 
@@ -128,12 +146,25 @@ class HDFS_Util(object):
         except Exception as e:
             print(str(e))
 
-    def read_files_from_hdfs(self, file_names):
+    def read_files(self, file_names):
         raise Exception("Not implemented")
 
+    def write_file(self, source_file, file_name):
+        try:
+            for data_type in self.import_types.keys():
+                if data_type in source_file:
+                    dest_path = self.hdfs_types[data_type]
+                    # pushing to HDFS
+                    self.hdfs.put(source_file, os.path.join(dest_path, file_name))
+                    print(f"Write to file: {os.path.join(dest_path, file_name)}")
+        except Exception as e:
+            print(str(e))
+
+
+# Test Functions
 # if __name__ == "__main__":
-#     hdfUtil = HDFS_Util()
-#     # hdfUtil.import_local_data()
-#     # hdfUtil.delete_file_from_hdfs("temp.csv")
+    # hdfUtil = HDFSUtil()
+    #     hdfUtil.import_local_data()
+    # hdfUtil.delete_file("temp_tweet.csv")
 #     df = hdfUtil.read_file_from_hdfs('tweets_08-03-2020.csv')
 #     df.info()

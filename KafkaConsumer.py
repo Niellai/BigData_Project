@@ -1,13 +1,9 @@
 import os
 from datetime import datetime
 
-from kafka import KafkaConsumer
-from json import loads
-import os
 import pandas as pd
-import pyarrow as pa
-import pyarrow.parquet as pa
 from hdfs3 import HDFileSystem
+from kafka import KafkaConsumer
 
 """
 Reference:  https://arrow.apache.org/docs/python/csv.html
