@@ -173,4 +173,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print("Polling from RSS Feeds...\n")
     main()

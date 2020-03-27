@@ -6,13 +6,13 @@ from kafka import KafkaConsumer, KafkaProducer
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 
-class TweetCleanSentiment(object):
+class RSSCleanSentiment(object):
     def __init__(self):
         super().__init__()
 
-        # listen to topic from LiveTweet.py
+        # listen topic from RSSLive.py
         self.is_listening = True
-        self.listen_topic = "transformed_tweet"
+        self.listen_topic = "transformed_rss"
         self.consumer = KafkaConsumer(
             self.listen_topic,
             bootstrap_servers=['localhost:9092'],
@@ -22,7 +22,7 @@ class TweetCleanSentiment(object):
             value_deserializer=lambda x: loads(x.decode('utf-8')))
 
         # initial Kafka producer
-        self.send_topic = "sentiment_tweet"
+        self.send_topic = "sentiment_rss"
         self.producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
                                       value_serializer=lambda x: dumps(x).encode('utf-8'))
 
@@ -60,27 +60,36 @@ class TweetCleanSentiment(object):
             for message in self.consumer:
                 # Extracting from consumer
                 json_object = message.value
-                doc = self.nlp(json_object['text'])
+                item_list = []
 
-                # Get sentiment
-                scores = self.get_sentiment(doc)
-                if scores['compound'] > 0.2:
-                    sentiment = 1
-                elif scores['compound'] < -0.2:
-                    sentiment = -1
-                else:
-                    sentiment = 0
+                for item in json_object:
+                    soup = BeautifulSoup(item['title'], 'lxml')
+                    html_free = soup.get_text()
+                    html_free = html_free.split("https")[0]
 
-                json_object['compound'] = scores['compound']
-                json_object['sentiment'] = sentiment
-                print(json_object)
+                    doc = self.nlp(html_free)
+
+                    # Get sentiment
+                    scores = self.get_sentiment(doc)
+                    if scores['compound'] > 0.2:
+                        sentiment = 1
+                    elif scores['compound'] < -0.2:
+                        sentiment = -1
+                    else:
+                        sentiment = 0
+
+                    item['title'] = html_free
+                    item['compound'] = scores['compound']
+                    item['sentiment'] = sentiment
+                    item_list.append(item)
+                    print(item)
 
                 # Send to kafka consumer
-                self.send_to_kafka(json_object)
+                self.send_to_kafka(item_list)
 
     def send_to_kafka(self, data):
         """
-        Send sentiment tweet for storing in HDFS
+        Send sentiment rss for storing in HDFS
 
         :return: None
         """
@@ -91,7 +100,6 @@ class TweetCleanSentiment(object):
 
 
 if __name__ == "__main__":
-    print("Computing sentiment on live tweets...\n")
-    cleanText = TweetCleanSentiment()
-    cleanText.consume_doc()
-
+    print("RSS sentiment on live RSS feed...\n")
+    rssText = RSSCleanSentiment()
+    rssText.consume_doc()
