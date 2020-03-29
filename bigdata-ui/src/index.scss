@@ -1,0 +1,209 @@
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700,900&display=swap");
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Lato", "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+#canvas {
+  margin: 0px;
+  padding: 0px;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  z-index: -100;
+  background: rgb(30, 30, 30);
+}
+
+.content {
+  z-index: 0;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.main {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  padding-top: 10vmin;
+  flex-direction: column;
+  align-items: center;
+  .main-title {
+    font-size: calc(7.5vmin + 10px);
+    font-weight: 900;
+    text-align: right;
+    color: #fafafa;
+  }
+  .main-container {
+    display: flex;
+    justify-content: center;
+  }
+  .main-box {
+    width: 35vmin;
+    height: 60vmin;
+    border-radius: 20px;
+    margin: 1.5vmin;
+    padding: 1vmin;
+    padding-top: 10vmin;
+    background: rgba(255, 255, 255, 0.75);
+    color: #555;
+    &.expanded {
+      width: 115vmin;
+      height: 67vmin;
+      padding-top: 3vmin;
+      transition: all 1s;
+      cursor: default;
+      &:hover {
+        background: rgba(255, 255, 255, 0.75);
+      }
+
+      .box-title {
+        text-align: left;
+        padding: 0 2vmin;
+        font-size: calc(2vmin + 10px);
+      }
+    }
+    .box-title {
+      font-size: calc(1.5vmin + 10px);
+      font-weight: 900;
+      text-align: center;
+    }
+    .box-icon {
+      text-align: center;
+      padding: 4vmin 2vmin;
+      font-size: calc(6vmin + 15px);
+    }
+    .box-description {
+      padding: 2vmin 3vmin;
+      text-align: center;
+      font-size: calc(1vmin + 5px);
+    }
+    .box-brands {
+      text-align: center;
+      margin-top: 10vmin;
+      font-size: calc(2vmin + 5px);
+      i {
+        margin: 0 0.75vmin;
+      }
+    }
+    transition: all 0.35s;
+    cursor: pointer;
+    &:hover {
+      background: rgba(255, 255, 255, 1);
+    }
+  }
+  .main-button {
+    width: 100px;
+    height: 100px;
+    transition: all 0.2s;
+    &:hover {
+      width: 150px;
+      height: 150px;
+    }
+  }
+}
+
+.content-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  .box-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100% - 3.5vmin);
+    .bar-container {
+      width: 50%;
+      height: 90%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &.column {
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+      &.scroll {
+        overflow: auto;
+        padding: 0 1vmin;
+      }
+    }
+  }
+}
+
+.sentiment-number {
+  text-align: center;
+  font-size: calc(15vmin + 10px);
+  margin-bottom: 15vmin;
+  font-weight: 900;
+}
+
+.box-data {
+  width: 100%;
+  min-height: 200px;
+  background: rgba(100, 100, 100, 0.85);
+  margin: 0.5vmin;
+  border-radius: 10px;
+  transition: all 0.2s;
+  &:hover {
+    background: rgba(60, 60, 60, 1);
+    transform: scale(1.02);
+  }
+}
+
+.box-menu {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4vmin 0 1vmin;
+  .box-back {
+    font-size: calc(3vmin + 10px);
+    cursor: pointer;
+    transition: transform 0.2s;
+    &:hover {
+      transform: scale(1.001);
+    }
+  }
+}
+
+.cloud {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Let's get this party started */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: rgba(160, 160, 160, 0.8);
+  -webkit-box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(160, 160, 160, 0.4);
+}
