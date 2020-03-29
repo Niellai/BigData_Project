@@ -1,0 +1,23 @@
+export default [
+  "Hello",
+  "world",
+  "normally",
+  "you",
+  "want",
+  "more",
+  "words",
+  "than",
+  "this",
+  "going",
+  "speaker",
+  "toilet",
+  "paper",
+  "mouse",
+  "cup",
+  "tablet",
+  "government",
+  "seriously",
+  "nintendo",
+  "switch",
+  "clock"
+];
