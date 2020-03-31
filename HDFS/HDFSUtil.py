@@ -1,7 +1,9 @@
 import os
 from os import listdir
 from os.path import isfile, join
+from pyspark.sql.types import *
 
+from datetime import datetime
 from hdfs3 import HDFileSystem
 import pandas as pd
 
@@ -62,7 +64,8 @@ class HDFSUtil(object):
             try:
                 hdfs_files = self.get_files(data_type)
                 local_folder = self.import_types[data_type]
-                onlyfiles = [f for f in listdir(local_folder) if isfile(join(local_folder, f) and ".~" not in f)]
+                onlyfiles = [f for f in listdir(local_folder) if
+                             isfile(os.path.join(local_folder, f)) and ".~" not in f]
 
                 for file in onlyfiles:
                     try:
@@ -128,7 +131,46 @@ class HDFSUtil(object):
         except Exception as e:
             print(str(e))
 
-    def read_file(self, file_name):
+    def read_file_date(self, start_date, end_date=None):
+        start_date = datetime.strptime(start_date, "%d-%m-%Y")
+        if end_date:
+            end_date = datetime.strptime(end_date, "%d-%m-%Y")
+        else:
+            end_date = start_date
+
+        # Getting all files with start end date
+        files = self.get_files('tweet')
+        files_datetime = []
+        for f in files:
+            try:
+                f = f.split("/")[-1]
+                datetimeStr = f.split("_")[1]
+                datetimeStr = datetimeStr.split(".")[0]
+                date = datetime.strptime(datetimeStr, "%d-%m-%Y")
+                files_datetime.append(date)
+            except Exception as e:
+                print(str(e))
+
+        # Append files to be loaded
+        result_files = []
+        for file, date in zip(files, files_datetime):
+            if start_date <= date <= end_date:
+                result_files.append(file)
+
+        if len(result_files) == 0:
+            return None
+
+        # Read and combine all dataframe
+        df_list = []
+        for mfile in result_files:
+            if self.hdfs.exists(mfile):
+                with self.hdfs.open(mfile) as file:
+                    df = pd.read_csv(file)
+                    df_list.append(df)
+        df = pd.concat(df_list)
+        return df
+
+    def read_file_dataframe(self, file_name):
         """
         Return the DataFrame load from HDFS
 
@@ -142,12 +184,50 @@ class HDFSUtil(object):
                 if self.hdfs.exists(hdfs_path):
                     with self.hdfs.open(hdfs_path) as f:
                         df = pd.read_csv(f)
-                        return df
+                        p_schema = self.pandas_to_spark_schema(df)
+                        return df, p_schema
         except Exception as e:
             print(str(e))
 
-    def read_files(self, file_names):
-        raise Exception("Not implemented")
+    def read_file(self, file_name):
+        try:
+            for data_type in self.hdfs_types.keys():
+                hdfs_path = self.hdfs_types[data_type]
+                hdfs_path = os.path.join(hdfs_path, file_name)
+                if self.hdfs.exists(hdfs_path):
+                    return hdfs_path
+        except Exception as e:
+            print(str(e))
+
+    # Auxiliar functions
+    def equivalent_type(self, f):
+        if f == 'datetime64[ns]':
+            return DateType()
+        elif f == 'int64':
+            return LongType()
+        elif f == 'int32':
+            return IntegerType()
+        elif f == 'float64':
+            return FloatType()
+        else:
+            return StringType()
+
+    def define_structure(self, string, format_type):
+        try:
+            typo = self.equivalent_type(format_type)
+        except:
+            typo = StringType()
+        return StructField(string, typo)
+
+    # Given pandas dataframe, it will return a spark's dataframe.
+    def pandas_to_spark_schema(self, pandas_df):
+        columns = list(pandas_df.columns)
+        types = list(pandas_df.dtypes)
+        struct_list = []
+        for column, typo in zip(columns, types):
+            struct_list.append(self.define_structure(column, typo))
+        p_schema = StructType(struct_list)
+        return p_schema
 
     def write_file(self, source_file, file_name):
         try:
@@ -164,7 +244,9 @@ class HDFSUtil(object):
 # Test Functions
 # if __name__ == "__main__":
     # hdfUtil = HDFSUtil()
-    #     hdfUtil.import_local_data()
-    # hdfUtil.delete_file("temp_tweet.csv")
+    # hdfUtil.read_file_date("20-02-2020")
+
+    # hdfUtil.import_local_data()
+    # hdfUtil.delete_file("history_tweets_20-02-2020.csv")
 #     df = hdfUtil.read_file_from_hdfs('tweets_08-03-2020.csv')
 #     df.info()

@@ -41,7 +41,7 @@ class TweetStoringToHDFS(object):
                 if self.curFile == "" or self.curFile != file_name:
                     # Load current HDFS file as df
                     if self.hdfsUtil.is_file_exist(file_name):
-                        self.df = self.hdfsUtil.read_file(file_name)
+                        self.df = self.hdfsUtil.read_file_df(file_name)
                         self.curFile = file_name
                     else:
                         # TODO: Write to HDFS before creating new one, if contain data
