@@ -27,7 +27,7 @@ class RSSStoreToHDFS(object):
         self.hdfsUtil = HDFSUtil()
         self.curFile = ""
         self.df = None
-        self.save_at_batches = 1  # control how frequent we save our file
+        self.save_at_batches = 100  # control how frequent we save our file
 
     def write_rss(self):
         while self.is_listening:
@@ -39,7 +39,7 @@ class RSSStoreToHDFS(object):
                 if self.curFile == "" or self.curFile != file_name:
                     # Load current HDFS file as df
                     if self.hdfsUtil.is_file_exist(file_name):
-                        self.df = self.hdfsUtil.read_file_df(file_name)
+                        self.df, _ = self.hdfsUtil.read_file_dataframe(file_name)
                         self.curFile = file_name
                     else:
                         # TODO: Write to HDFS before creating new one, if contain data
@@ -54,9 +54,10 @@ class RSSStoreToHDFS(object):
                 # Append the new rss
                 frames = [self.df, cur_df]
                 self.df = pd.concat(frames)
-                self.df.drop_duplicates(subset="title", keep=False, inplace=True)
+                self.df.drop_duplicates(subset="title", keep="first", inplace=True)
 
                 # saving the result at 1000 new rss
+                print(f"Current df: {len(self.df)} / {self.save_at_batches}")
                 # if len(self.df) % self.save_at_batches == self.save_at_batches:
                 if len(self.df) > 0:
                     temp_path = os.path.join("../HDFS", self.hdfsUtil.temp_types["rss"])

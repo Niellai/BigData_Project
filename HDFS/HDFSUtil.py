@@ -1,6 +1,6 @@
 import os
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile
 from pyspark.sql.types import *
 
 from datetime import datetime
@@ -132,6 +132,18 @@ class HDFSUtil(object):
             print(str(e))
 
     def read_file_date(self, start_date, end_date=None):
+        """
+        Reading file from specific dates
+
+        "start_date": Starting date inclusive, have to be in 31-03-2020 format.
+
+        "end_date": Nullable field. Ending date inclusive, have to be in 31-03-2020 format.
+
+        :param start_date: { "start_date": 31-03-2020 }
+        :param end_date:  { "start_date": 31-03-2020, "end_date": 30-04-2020 }
+        :return: pandas data frame
+        """
+
         start_date = datetime.strptime(start_date, "%d-%m-%Y")
         if end_date:
             end_date = datetime.strptime(end_date, "%d-%m-%Y")
@@ -243,10 +255,10 @@ class HDFSUtil(object):
 
 # Test Functions
 # if __name__ == "__main__":
-    # hdfUtil = HDFSUtil()
-    # hdfUtil.read_file_date("20-02-2020")
+#     hdfUtil = HDFSUtil()
+# hdfUtil.read_file_date("20-02-2020")
 
-    # hdfUtil.import_local_data()
-    # hdfUtil.delete_file("history_tweets_20-02-2020.csv")
+# hdfUtil.import_local_data()
+# hdfUtil.delete_file("history_tweets_20-02-2020.csv")
 #     df = hdfUtil.read_file_from_hdfs('tweets_08-03-2020.csv')
 #     df.info()
