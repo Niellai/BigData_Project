@@ -11,7 +11,7 @@ sampleNLP = SampleNLP()
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def CheckService():
     return "Service is running."
 
@@ -35,7 +35,15 @@ def WordCloud():
         # Extracting from request
         mDate = json.loads(request.data)
 
-        result = sampleNLP.word_cloud(mDate)
+        result = sampleNLP.spark_word_cloud(mDate)
+        return result
+
+
+@app.route('/query', methods=['POST'])
+def query():
+    if request.method == "POST":
+        data = json.loads(request.data)
+        result = sampleNLP.query_sentence(data)
         return result
 
 

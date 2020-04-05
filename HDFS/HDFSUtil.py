@@ -131,7 +131,7 @@ class HDFSUtil(object):
         except Exception as e:
             print(str(e))
 
-    def read_file_date(self, start_date, end_date=None):
+    def read_file_date(self, start_date, end_date=None, data_type="tweet"):
         """
         Reading file from specific dates
 
@@ -141,6 +141,7 @@ class HDFSUtil(object):
 
         :param start_date: { "start_date": 31-03-2020 }
         :param end_date:  { "start_date": 31-03-2020, "end_date": 30-04-2020 }
+        :param data_type: "tweet", "rss"
         :return: pandas data frame
         """
 
@@ -151,7 +152,7 @@ class HDFSUtil(object):
             end_date = start_date
 
         # Getting all files with start end date
-        files = self.get_files('tweet')
+        files = self.get_files(data_type)
         files_datetime = []
         for f in files:
             try:
@@ -180,7 +181,8 @@ class HDFSUtil(object):
                     df = pd.read_csv(file)
                     df_list.append(df)
         df = pd.concat(df_list)
-        return df
+        p_schema = self.pandas_to_spark_schema(df)
+        return df, p_schema
 
     def read_file_dataframe(self, file_name):
         """
@@ -251,7 +253,6 @@ class HDFSUtil(object):
                     print(f"Write to file: {os.path.join(dest_path, file_name)}")
         except Exception as e:
             print(str(e))
-
 
 # Test Functions
 # if __name__ == "__main__":

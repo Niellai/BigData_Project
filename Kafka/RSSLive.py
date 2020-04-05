@@ -15,6 +15,10 @@ class RSSLive(object):
         self.last_modified = None
         self.rss_list = []
         self.news_urls = {
+            'straitstimes_asia': 'https://www.straitstimes.com/news/asia/rss.xml',
+            'straitstimes_sg': "https://www.straitstimes.com/news/singapore/rss.xml",
+            'cna_asia': "https://www.channelnewsasia.com/rssfeeds/8395744",
+            'cna_singapore': "https://www.channelnewsasia.com/rssfeeds/8396082",
             'sg': 'https://rss.app/feeds/xU6SJpiMAfTWwJ73.xml',
             'wuhan': 'https://rss.app/feeds/Tl969wE8IeWxNSB9.xml',
             'covid19': 'https://rss.app/feeds/i4YNqlh35xUILXSn.xml',
