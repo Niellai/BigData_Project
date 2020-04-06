@@ -1,14 +1,13 @@
+import json
 import os
 import re
 
+import gensim.downloader as api
+import numpy as np
 import spacy
 from gensim.utils import tokenize
 from pyspark import SparkContext, SQLContext
-import gensim.downloader as api
-import numpy as np
-import pandas as pd
-from flask import jsonify
-import json
+from dateutil import parser
 
 from BigData_Project.HDFS.HDFSUtil import HDFSUtil
 
@@ -173,9 +172,13 @@ class SampleNLP(object):
                 scores = self.model.cosine_similarities(query_vector, sents_vectors)
                 scores[np.isnan(scores)] = 0
 
+                datetime = parser.parse(str(row['created_at']))
                 meta["sentence"] = str(sents[int(np.argmax(scores))])
                 meta["score"] = str(scores[np.argmax(scores)])
                 meta["doc"] = str(row['text'])
+                meta['date'] = str(datetime.strftime("%d-%m-%Y_%H:%M:%S"))
+                meta['author'] = str(row['screen_name'])
+
                 result.append(meta)
             final_result['result'] = result
             result_str = json.dumps(final_result)
