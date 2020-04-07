@@ -44,7 +44,7 @@ def query():
     if request.method == "POST":
         data = json.loads(request.data)
         result = sampleNLP.query_sentence(data)
-        return result
+        return json.loads(result)
 
 
 if __name__ == '__main__':
