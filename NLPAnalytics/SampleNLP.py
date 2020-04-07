@@ -43,16 +43,23 @@ class SampleNLP(object):
         else:
             end_date = None
 
-        # load data from hdfs
+        # Loading from Tweets
+        sample_text1 = ""
         tweet_df, tweet_df_schema = self.hdfsUtil.read_file_date(start_date=start_date, end_date=end_date,
                                                                  data_type='tweet')
-        tweet_df = self.sqlContext.createDataFrame(tweet_df, tweet_df_schema)
+        if tweet_df is not None or tweet_df_schema is not None:
+            tweet_df = self.sqlContext.createDataFrame(tweet_df, tweet_df_schema)
+            sample_text1 = " ".join(
+                text.text for text in tweet_df.select("text").rdd.takeSample(False, max_row, seed=42))
 
+        # Loading from RSS
+        sample_text2 = ""
         rss_df, rss_df_schema = self.hdfsUtil.read_file_date(start_date=start_date, end_date=end_date, data_type='rss')
-        rss_df = self.sqlContext.createDataFrame(rss_df, rss_df_schema)
+        if rss_df is not None or rss_df_schema is not None:
+            rss_df = self.sqlContext.createDataFrame(rss_df, rss_df_schema)
+            sample_text2 = " ".join(
+                text.title for text in rss_df.select("title").rdd.takeSample(False, max_row, seed=42))
 
-        sample_text1 = " ".join(text.text for text in tweet_df.select("text").rdd.takeSample(False, max_row, seed=42))
-        sample_text2 = " ".join(text.title for text in rss_df.select("title").rdd.takeSample(False, max_row, seed=42))
         sample_text = f"{sample_text1} {sample_text2}"
 
         # Extract tokens
