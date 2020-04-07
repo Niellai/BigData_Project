@@ -120,6 +120,20 @@ class HDFSUtil(object):
             print(str(e))
             return False
 
+    def delete_all_file(self):
+        del_count = 0
+        for data_type in self.import_types.keys():
+            try:
+                hdfs_files = self.get_files(data_type)
+                for file in hdfs_files:
+                    if self.hdfs.exists(file):
+                        self.hdfs.rm(file)
+                        print(f"File deleted: {file}")
+                        del_count += 1
+            except Exception as e:
+                print(str(e))
+        print(f"Total files deleted: {del_count}")
+
     def is_file_exist(self, file_name):
         try:
             for data_type in self.hdfs_types.keys():
@@ -257,8 +271,10 @@ class HDFSUtil(object):
 # Test Functions
 # if __name__ == "__main__":
 #     hdfUtil = HDFSUtil()
+#     hdfUtil.delete_all_file()
+#     hdfUtil.import_local_data()
+#
 # hdfUtil.read_file_date("20-02-2020")
-
 # hdfUtil.import_local_data()
 # hdfUtil.delete_file("history_tweets_20-02-2020.csv")
 #     df = hdfUtil.read_file_from_hdfs('tweets_08-03-2020.csv')
