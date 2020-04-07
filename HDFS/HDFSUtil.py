@@ -185,11 +185,12 @@ class HDFSUtil(object):
                 result_files.append(file)
 
         if len(result_files) == 0:
-            return None
+            return None, None
 
         # Read and combine all dataframe
+        max_files = 3
         df_list = []
-        for mfile in result_files:
+        for mfile in result_files[0:max_files]:
             if self.hdfs.exists(mfile):
                 with self.hdfs.open(mfile) as file:
                     df = pd.read_csv(file)
