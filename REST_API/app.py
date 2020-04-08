@@ -41,6 +41,18 @@ def WordCloud():
 
 @app.route('/query', methods=['POST'])
 def query():
+    """
+    Query the collected data set by date, query will return top n most similar post back to user.
+
+    Expected input:
+    "start_date": "20-02-2020",
+    "end_date": "27-03-2020",
+    "context": "outbreak, pneumonia",
+    "top_n": 3,
+    "query": "Find out how #Coronavirus is likely to develop globally."
+
+    :return: Most similar post
+    """
     if request.method == "POST":
         data = json.loads(request.data)
         result = sampleNLP.query_sentence(data)
