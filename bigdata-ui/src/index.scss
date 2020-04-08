@@ -256,7 +256,7 @@ code {
   min-height: 150px;
   background: rgba(100, 100, 100, 0.85);
   color: #fafafa;
-  width: calc(100% - 70px);
+  width: calc(100% - 100px);
   margin: 0.5vmin;
   padding: 25px;
   border-radius: 10px;
@@ -303,6 +303,7 @@ code {
     grid-area: text;
     white-space: pre-wrap;
     font-size: 1.15vmin;
+    overflow: hidden;
   }
   .box-data-sentiment {
     grid-area: sentiment;

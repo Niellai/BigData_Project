@@ -5,7 +5,7 @@ import Loader from "../components/Loader";
 import sampleOverall from "../data/sampleOverallSentiment";
 import sampleSentiment from "../data/sampleSentiment";
 
-const ScreensWordCloud = ({ setPage }) => {
+const ScreensSentiment = ({ setPage }) => {
   const [boxClass, setBoxClass] = useState("main-box");
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -62,4 +62,4 @@ const ScreensWordCloud = ({ setPage }) => {
   );
 };
 
-export default ScreensWordCloud;
+export default ScreensSentiment;

@@ -22,3 +22,22 @@ export const getWordCloud = async (start_date, end_date) => {
     return {};
   }
 };
+
+export const getQuery = async (start_date, end_date, context, query) => {
+  try {
+    const baseUrl = process.env.REACT_APP_BASEURL;
+    const body = { start_date, end_date, context, query, top_n: 10 };
+    const response = await fetch(`${baseUrl}/query`, {
+      method: "post",
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log("hi");
+    const rjson = await response.json();
+    console.log(rjson);
+    return rjson;
+  } catch (error) {
+    console.log(error);
+    return {};
+  }
+};

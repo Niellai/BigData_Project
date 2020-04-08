@@ -5,7 +5,10 @@ import makeAnimated from "react-select/animated";
 
 const animatedComponents = makeAnimated();
 
-const SearchBar = ({ query, setQuery, tags, setTags }) => {
+const SearchBar = ({ query, setQuery, setTags, onSubmit }) => {
+  const handleChange = (input) => {
+    setTags(input.map((i) => i.label));
+  };
   return (
     <div className="box-search">
       <div className="box-inputs">
@@ -13,6 +16,8 @@ const SearchBar = ({ query, setQuery, tags, setTags }) => {
           className="box-search-input"
           type="text"
           placeholder="Please Type in your Query here..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
         <CreatableSelect
           isMulti
@@ -21,9 +26,12 @@ const SearchBar = ({ query, setQuery, tags, setTags }) => {
           options={colourOptions}
           className="basic-multi-select"
           classNamePrefix="select"
+          onChange={handleChange}
         />
       </div>
-      <button className="box-search-button">Search</button>
+      <button className="box-search-button" onClick={onSubmit}>
+        Search
+      </button>
     </div>
   );
 };

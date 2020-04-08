@@ -42,7 +42,21 @@ const ScreensWordCloud = ({ setPage, startDate, endDate }) => {
         const start_date = convertDate(startDate);
         const end_date = convertDate(endDate);
         const returnData = await getWordCloud(start_date, end_date);
-        setWcData(returnData);
+
+        // keep only 50 words
+        const threshold = 50;
+        let wordsToKeep = Object.keys(returnData).map((i) => ({
+          word: i,
+          count: returnData[i],
+        }));
+        wordsToKeep.sort((a, b) => b.count - a.count);
+        wordsToKeep = wordsToKeep.slice(0, threshold);
+        const wordsObject = wordsToKeep.reduce((acc, cur) => {
+          acc[cur.word] = cur.count;
+          return acc;
+        }, {});
+
+        setWcData(wordsObject);
       }
       setTimeout(() => setLoading(false), 100);
       setTimeout(() => setBoxClass("main-box expanded is-visible"), 300);

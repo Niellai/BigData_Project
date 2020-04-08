@@ -3,6 +3,7 @@ import DataBox from "../components/DataBox";
 import Loader from "../components/Loader";
 import sampleTags from "../data/sampleTags";
 import SearchBar from "../components/SearchBar";
+import { convertDate, getQuery } from "../common";
 
 const transformTag = (tag, index) => {
   const { author, date, doc, score, sentence } = tag;
@@ -28,21 +29,41 @@ const transformTag = (tag, index) => {
   };
 };
 
-const ScreensTag = ({ setPage }) => {
+const ScreensTag = ({ setPage, startDate, endDate }) => {
   const [boxClass, setBoxClass] = useState("main-box");
+  const [results, setResults] = useState([]);
   const [query, setQuery] = useState("");
   const [tags, setTags] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = () => {
+    setLoading(true);
+
+    const timeout = process.env.REACT_APP_MODE === "DEV" ? 3000 : 0;
+    setTimeout(async () => {
+      if (process.env.REACT_APP_MODE === "DEV") {
+        setResults(sampleTags.result);
+      } else {
+        const start_date = convertDate(startDate);
+        const end_date = convertDate(endDate);
+        const context = tags.join(",");
+        const returnData = await getQuery(start_date, end_date, context, query);
+
+        console.log(returnData);
+        setResults(returnData.result);
+        setTags([]);
+        setQuery("");
+      }
+      setTimeout(() => setLoading(false), 100);
+    }, timeout);
+  };
+
   useEffect(() => {
-    setTimeout(() => setBoxClass("main-box expanded"));
-    setTimeout(() => {
-      setLoading(false);
-      setTimeout(() => setBoxClass("main-box expanded is-visible"), 200);
-    }, 3000);
+    setTimeout(() => setBoxClass("main-box expanded is-visible"));
   }, []);
 
   // props
-  const searchProps = { query, setQuery, tags, setTags };
+  const searchProps = { query, setQuery, tags, setTags, onSubmit };
   return (
     <div className="content-container">
       <div className={boxClass}>
@@ -58,9 +79,9 @@ const ScreensTag = ({ setPage }) => {
               <SearchBar {...searchProps} />
               <div className="bar-container column scroll expanded">
                 <div className="title">Searched Documents</div>
-                {!loading && (
+                {!loading && results.length !== 0 && (
                   <>
-                    {sampleTags.result
+                    {results
                       .map((tag, num) => transformTag(tag, num))
                       .map((i) => (
                         <DataBox data={i} key={i.index} />

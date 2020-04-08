@@ -14,8 +14,8 @@ const ScreensRoot = () => {
   initialDate.setMinutes(-5);
 
   // initialize all data
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date("2020-02-20"));
+  const [endDate, setEndDate] = useState(new Date("2020-03-27"));
   const [searchDate, setSearchDate] = useState({
     start: initialDate,
     end: new Date(),
