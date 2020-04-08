@@ -1,3 +1,4 @@
+import math
 import os
 from os import listdir
 from os.path import isfile
@@ -196,6 +197,12 @@ class HDFSUtil(object):
                     df = pd.read_csv(file)
                     df_list.append(df)
         df = pd.concat(df_list)
+
+        if data_type == "tweet":
+            for idx, row in df.iterrows():
+                if str(row['extended_tweet']) != "nan":
+                    df['text'].iloc[idx] = row['extended_tweet']
+
         p_schema = self.pandas_to_spark_schema(df)
         return df, p_schema
 
@@ -204,7 +211,7 @@ class HDFSUtil(object):
         Return the DataFrame load from HDFS
 
         :param file_name: Case sensitive
-        :return: DataFrame
+        :return: DataFrame, DataFrame_Schema
         """
         try:
             for data_type in self.hdfs_types.keys():

@@ -41,7 +41,7 @@ class TweetStoringToHDFS(object):
                 if self.curFile == "" or self.curFile != file_name:
                     # Load current HDFS file as df
                     if self.hdfsUtil.is_file_exist(file_name):
-                        self.df = self.hdfsUtil.read_file_dataframe(file_name)
+                        self.df, _ = self.hdfsUtil.read_file_dataframe(file_name)
                         self.curFile = file_name
                     else:
                         # TODO: Write to HDFS before creating new one, if contain data
@@ -59,10 +59,12 @@ class TweetStoringToHDFS(object):
                 self.df = pd.concat(frames)
 
                 # saving the result at 1000 new tweets
-                if len(self.df) % self.save_at_batches == self.save_at_batches:
+                print(f"{len(self.df)} / {self.save_at_batches}")
+                if (len(self.df) % self.save_at_batches) > 0 and len(self.df) >= self.save_at_batches:
                     temp_path = os.path.join("../HDFS", self.hdfsUtil.temp_types["tweet"])
                     self.df.to_csv(temp_path, index=False)
                     self.hdfsUtil.write_file(temp_path, file_name)
+                    self.df = pd.DataFrame()
 
 
 if __name__ == "__main__":
