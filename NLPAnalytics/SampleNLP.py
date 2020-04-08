@@ -255,6 +255,30 @@ class SampleNLP(object):
         # Search for  the closet document
         return self.search_doc(query, context, top_n)
 
+    def get_sentiment(self, data):
+        start_date = data['start_date']
+        if "end_date" in data.keys():
+            end_date = data['end_date']
+        else:
+            end_date = None
+
+        is_positive = data['is_positive']
+        top_n = data['top_n']
+
+        df_tweet, tweet_df_schema = self.hdfsUtil.read_file_date(start_date=start_date, end_date=end_date,
+                                                                 data_type='tweet')
+        sample_size = 10000
+        if df_tweet is not None and len(df_tweet) > sample_size:
+            df_tweet = df_tweet.sample(n=sample_size)
+
+        if "compound" in list(df_tweet.columns) and is_positive:
+            df_result = df_tweet.sort_values(by=['compound'], ascending=False)[:top_n]
+        else:
+            df_result = df_tweet.sort_values(by=['compound'], ascending=True)[:top_n]
+
+        df_result = df_result[["text", "screen_name", "created_at", "compound"]]
+        return df_result.to_json(orient="records")
+
 # if __name__ == "__main__":
 #     try:
 #         sampleNLP = SampleNLP()

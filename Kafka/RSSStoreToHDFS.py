@@ -58,11 +58,11 @@ class RSSStoreToHDFS(object):
 
                 # saving the result at 1000 new rss
                 print(f"Current df: {len(self.df)} / {self.save_at_batches}")
-                # if len(self.df) % self.save_at_batches == self.save_at_batches:
-                if len(self.df) > 0:
+                if (len(self.df) % self.save_at_batches) > 0 and len(self.df) >= self.save_at_batches:
                     temp_path = os.path.join("../HDFS", self.hdfsUtil.temp_types["rss"])
                     self.df.to_csv(temp_path, index=False)
                     self.hdfsUtil.write_file(temp_path, file_name)
+                    self.df = pd.DataFrame()
 
 
 if __name__ == "__main__":

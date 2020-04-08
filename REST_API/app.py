@@ -1,6 +1,6 @@
 from json import dumps
 import json
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from datetime import date
 
 from kafka import KafkaProducer
@@ -57,6 +57,27 @@ def query():
         data = json.loads(request.data)
         result = sampleNLP.query_sentence(data)
         return json.loads(result)
+
+
+@app.route("/sentiment", methods=['POST'])
+def sentiment():
+    """
+    Provide extreme sentiment from tweet post, will return top_n.
+    
+    It can be either positive or negative
+
+    {
+        "start_date": "08-03-2020",
+        "end_date": "08-04-2020",
+        "is_positive": false,
+        "top_n": 10
+    }
+    :return: Most extreme post
+    """
+    if request.method == "POST":
+        data = json.loads(request.data)
+        result = sampleNLP.get_sentiment(data)
+        return {"result": json.loads(result)}
 
 
 if __name__ == '__main__':

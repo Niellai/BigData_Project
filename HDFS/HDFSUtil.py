@@ -204,7 +204,7 @@ class HDFSUtil(object):
         Return the DataFrame load from HDFS
 
         :param file_name: Case sensitive
-        :return: DataFrame
+        :return: DataFrame, DataFrame_Schema
         """
         try:
             for data_type in self.hdfs_types.keys():
