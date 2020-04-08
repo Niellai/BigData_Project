@@ -109,6 +109,12 @@ code {
       padding: 2vmin 3vmin;
       text-align: center;
       font-size: calc(1vmin + 5px);
+      height: 150px;
+      .main-desc {
+        font-weight: 600;
+        font-size: 1.4em;
+        margin-bottom: 1vmin;
+      }
     }
     .box-brands {
       text-align: center;
