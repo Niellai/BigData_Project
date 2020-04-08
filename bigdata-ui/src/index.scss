@@ -164,6 +164,50 @@ code {
     height: calc(100% - 10vmin);
     margin-top: 3vmin;
     padding: 0 2.5vmin;
+    &.column {
+      flex-direction: column;
+    }
+    .box-search {
+      margin-bottom: 10px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .box-search-button {
+        border: none;
+        height: 100%;
+        border: 1px solid hsl(0, 0%, 80%);
+        border-radius: 4px;
+        margin-left: 5px;
+        width: 80px;
+        cursor: pointer;
+        &:hover,
+        &:focus {
+          border-color: #2684ff;
+          box-shadow: 0 0 0 1px #2684ff;
+        }
+      }
+      .box-inputs {
+        width: 60%;
+        .box-search-input {
+          width: calc(100% - 20px);
+          padding: 9px;
+          border: none;
+          border-radius: 4px;
+          font-size: 1em;
+          margin-bottom: 10px;
+          border: 1px solid hsl(0, 0%, 80%);
+          &:focus,
+          &:hover {
+            border-color: #2684ff;
+            box-shadow: 0 0 0 1px #2684ff;
+          }
+        }
+        .basic-multi-select {
+          width: 100%;
+        }
+      }
+    }
     .bar-container {
       width: calc(50% - 20px);
       margin: 0 10px;

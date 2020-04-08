@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import Bar from "../components/Bar";
 import WordCloud from "../components/WordCloud";
-import wcData from "../data/sampleWordcloud";
-import sampleData from "../data/sampleBar";
+import sampleWcData from "../data/sampleWordcloud";
 import Loader from "../components/Loader";
+import { getWordCloud, convertDate } from "../common";
 
 const transformToBarData = (data) => {
   const intData = Object.keys(data).map((i) => ({
@@ -26,18 +26,28 @@ const transformToBarData = (data) => {
   };
 };
 
-const ScreensWordCloud = ({ setPage }) => {
+const ScreensWordCloud = ({ setPage, startDate, endDate }) => {
   const containerRef = useRef(null);
+  const [wcData, setWcData] = useState({});
   const [boxClass, setBoxClass] = useState("main-box");
   const [loading, setLoading] = useState(true);
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     setTimeout(() => setBoxClass("main-box expanded"));
-    setTimeout(() => {
-      setLoading(false);
-      setTimeout(() => setBoxClass("main-box expanded is-visible"), 200);
-      setTimeout(() => setLoaded(true), 500);
-    }, 3000);
+    const timeout = process.env.REACT_APP_MODE === "DEV" ? 3000 : 0;
+    setTimeout(async () => {
+      if (process.env.REACT_APP_MODE === "DEV") {
+        setWcData(sampleWcData);
+      } else {
+        const start_date = convertDate(startDate);
+        const end_date = convertDate(endDate);
+        const returnData = await getWordCloud(start_date, end_date);
+        setWcData(returnData);
+      }
+      setTimeout(() => setLoading(false), 100);
+      setTimeout(() => setBoxClass("main-box expanded is-visible"), 300);
+      setTimeout(() => setLoaded(true), 600);
+    }, timeout);
   }, []);
 
   return (

@@ -5,29 +5,6 @@ import Loader from "../components/Loader";
 import sampleOverall from "../data/sampleOverallSentiment";
 import sampleSentiment from "../data/sampleSentiment";
 
-const data = [
-  {
-    index: 566,
-    Content:
-      '<span style="background-color: white; color: black; border-radius: 5px; padding: 0 2px;">@sighpad Good</span> thread ðŸ‘ðŸ½ðŸ‘ðŸ½...we need to start taking this more seriously, recently i took the bus and there was a paâ€¦ https://t.co/XnuAj5rgbY',
-    author: "Kenneth Ong",
-    label: 1,
-    compound: 0.6124,
-    published_date: "Sun",
-    Date: 1582425603000,
-  },
-  {
-    index: 567,
-    Content:
-      "@sighpad Good thread ðŸ‘ðŸ½ðŸ‘ðŸ½...we need to start taking this more seriously, recently i took the bus and there was a paâ€¦ https://t.co/XnuAj5rgbY",
-    author: "Cougher Cheong",
-    label: -1,
-    compound: -0.55,
-    published_date: "Sun",
-    Date: 1582425603000,
-  },
-];
-
 const ScreensWordCloud = ({ setPage }) => {
   const [boxClass, setBoxClass] = useState("main-box");
   const [loading, setLoading] = useState(true);

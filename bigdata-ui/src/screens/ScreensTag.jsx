@@ -2,30 +2,7 @@ import React, { useState, useEffect } from "react";
 import DataBox from "../components/DataBox";
 import Loader from "../components/Loader";
 import sampleTags from "../data/sampleTags";
-import { transform } from "framer-motion";
-
-const data = [
-  {
-    index: 566,
-    Content:
-      "@sighpad Good thread ðŸ‘ðŸ½ðŸ‘ðŸ½...we need to start taking this more seriously, recently i took the bus and there was a paâ€¦ https://t.co/XnuAj5rgbY",
-    author: "Kenneth Ong",
-    label: 1,
-    compound: 0.6124,
-    published_date: "Sun",
-    Date: 1582425603000,
-  },
-  {
-    index: 567,
-    Content:
-      "@sighpad Good thread ðŸ‘ðŸ½ðŸ‘ðŸ½...we need to start taking this more seriously, recently i took the bus and there was a paâ€¦ https://t.co/XnuAj5rgbY",
-    author: "Cougher Cheong",
-    label: -1,
-    compound: -0.55,
-    published_date: "Sun",
-    Date: 1582425603000,
-  },
-];
+import SearchBar from "../components/SearchBar";
 
 const transformTag = (tag, index) => {
   const { author, date, doc, score, sentence } = tag;
@@ -53,6 +30,8 @@ const transformTag = (tag, index) => {
 
 const ScreensTag = ({ setPage }) => {
   const [boxClass, setBoxClass] = useState("main-box");
+  const [query, setQuery] = useState("");
+  const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     setTimeout(() => setBoxClass("main-box expanded"));
@@ -61,6 +40,9 @@ const ScreensTag = ({ setPage }) => {
       setTimeout(() => setBoxClass("main-box expanded is-visible"), 200);
     }, 3000);
   }, []);
+
+  // props
+  const searchProps = { query, setQuery, tags, setTags };
   return (
     <div className="content-container">
       <div className={boxClass}>
@@ -72,8 +54,9 @@ const ScreensTag = ({ setPage }) => {
                 <i className="fas fa-chevron-circle-left"></i>
               </div>
             </div>
-            <div className="box-container">
-              <div className="bar-container column scroll padded expanded">
+            <div className="box-container column">
+              <SearchBar {...searchProps} />
+              <div className="bar-container column scroll expanded">
                 <div className="title">Searched Documents</div>
                 {!loading && (
                   <>

@@ -1,6 +1,7 @@
 from json import dumps
 import json
-from flask import Flask, request
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from datetime import date
 
 from kafka import KafkaProducer
@@ -9,7 +10,7 @@ from BigData_Project.NLPAnalytics.SampleNLP import SampleNLP
 sampleNLP = SampleNLP()
 
 app = Flask(__name__)
-
+CORS(app)
 
 @app.route('/', methods=['GET'])
 def CheckService():

@@ -23,6 +23,7 @@ const ScreensRoot = () => {
 
   // props
   const dateProps = { startDate, endDate, setStartDate, setEndDate };
+  const pageProps = { startDate, endDate, setPage };
 
   return (
     <div>
@@ -33,10 +34,10 @@ const ScreensRoot = () => {
             <div className="main-title">#coronavirus</div>
             <DateContainer {...dateProps} />
           </div>
-          {page === "main" && <ScreensMain setPage={setPage} />}
-          {page === "sentiment" && <ScreensSentiment setPage={setPage} />}
-          {page === "wordcloud" && <ScreensWordCloud setPage={setPage} />}
-          {page === "tag" && <ScreensTag setPage={setPage} />}
+          {page === "main" && <ScreensMain {...pageProps} />}
+          {page === "sentiment" && <ScreensSentiment {...pageProps} />}
+          {page === "wordcloud" && <ScreensWordCloud {...pageProps} />}
+          {page === "tag" && <ScreensTag {...pageProps} />}
         </div>
       </div>
     </div>
