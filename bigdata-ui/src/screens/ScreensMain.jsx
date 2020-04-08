@@ -35,7 +35,7 @@ const ScreensMain = ({ setPage }) => {
           <i className="fas fa-rss-square"></i>
         </div>
       </div>
-      <div className="main-box">
+      <div className="main-box" onClick={() => setPage("tag")}>
         <div className="box-title">#tags</div>
         <div className="box-icon">
           <i className="fas fa-tags"></i>

@@ -15,6 +15,10 @@ code {
     monospace;
 }
 
+.mr-1 {
+  margin-right: 0.5vmin;
+}
+
 #canvas {
   margin: 0px;
   padding: 0px;
@@ -36,7 +40,7 @@ code {
   width: 100%;
   height: 100%;
   display: flex;
-  padding-top: 10vmin;
+  padding-top: 6vmin;
   flex-direction: column;
   align-items: center;
   .main-title {
@@ -48,6 +52,10 @@ code {
   .main-container {
     display: flex;
     justify-content: center;
+    align-items: center;
+    &.column {
+      flex-direction: column;
+    }
   }
   .main-box {
     width: 35vmin;
@@ -78,6 +86,19 @@ code {
       font-size: calc(1.5vmin + 10px);
       font-weight: 900;
       text-align: center;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.5s;
+    }
+    .box-back {
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.5s 0.2s;
+    }
+    .box-container {
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.5s 0.5s;
     }
     .box-icon {
       text-align: center;
@@ -93,7 +114,8 @@ code {
       text-align: center;
       margin-top: 10vmin;
       font-size: calc(2vmin + 5px);
-      i {
+      i,
+      svg {
         margin: 0 0.75vmin;
       }
     }
@@ -114,6 +136,15 @@ code {
   }
 }
 
+.main-box.is-visible {
+  .box-back,
+  .box-container,
+  .box-title {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .content-container {
   display: flex;
   justify-content: center;
@@ -123,38 +154,61 @@ code {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: calc(100% - 3.5vmin);
+    width: calc(100% - 5vmin);
+    height: calc(100% - 10vmin);
+    margin-top: 3vmin;
+    padding: 0 2.5vmin;
     .bar-container {
-      width: 50%;
+      width: calc(50% - 20px);
+      margin: 0 10px;
       height: 90%;
       display: flex;
       justify-content: center;
       align-items: center;
+      &.expanded {
+        width: calc(100% - 20px);
+      }
+      &.gray {
+        background-color: rgba(160, 160, 160, 0.5);
+      }
+      &.padded {
+        padding: 4vmin 2vmin;
+      }
+      &.rounded {
+        border-radius: 15px;
+      }
       &.column {
         flex-direction: column;
         justify-content: flex-start;
       }
       &.scroll {
         overflow: auto;
-        padding: 0 1vmin;
+      }
+      .title {
+        font-size: 1.4em;
+        font-weight: 800;
+        text-align: center;
+      }
+      .sentiment-number {
+        text-align: center;
+        font-size: calc(15vmin + 10px);
+        margin-bottom: 5vmin;
+        font-weight: 900;
+        .title {
+          font-size: 0.2em;
+        }
       }
     }
   }
 }
 
-.sentiment-number {
-  text-align: center;
-  font-size: calc(15vmin + 10px);
-  margin-bottom: 15vmin;
-  font-weight: 900;
-}
-
 .box-data {
-  width: 100%;
-  min-height: 200px;
+  min-height: 150px;
   background: rgba(100, 100, 100, 0.85);
+  color: #fafafa;
+  width: calc(100% - 70px);
   margin: 0.5vmin;
+  padding: 25px;
   border-radius: 10px;
   transition: all 0.2s;
   &:hover {
@@ -173,6 +227,42 @@ code {
     transition: transform 0.2s;
     &:hover {
       transform: scale(1.001);
+    }
+  }
+}
+
+// .box-data grid
+.box-data {
+  font-size: 1.15vmin;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto;
+  grid-template-areas:
+    "header . . sentiment"
+    "text text text text";
+  .box-data-header {
+    grid-area: header;
+    .box-data-user {
+      margin-bottom: 0.25vmin;
+    }
+    .box-data-date {
+      color: #cacaca;
+    }
+  }
+  .box-data-text {
+    grid-area: text;
+    white-space: pre-wrap;
+    font-size: 1.15vmin;
+  }
+  .box-data-sentiment {
+    grid-area: sentiment;
+    margin-left: auto;
+    font-size: 1.65em;
+    &.smile {
+      color: #88fa88;
+    }
+    &.angry {
+      color: #fa8888;
     }
   }
 }
@@ -206,4 +296,18 @@ code {
 }
 ::-webkit-scrollbar-thumb:window-inactive {
   background: rgba(160, 160, 160, 0.4);
+}
+
+// Loader
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  .loader-text {
+    font-size: calc(1vmin + 10px);
+    text-align: center;
+  }
 }
