@@ -8,6 +8,7 @@ import spacy
 from gensim.utils import tokenize
 from pyspark import SparkContext, SQLContext
 from dateutil import parser
+import pandas as pd
 
 from BigData_Project.HDFS.HDFSUtil import HDFSUtil
 
@@ -179,12 +180,12 @@ class SampleNLP(object):
                 scores = self.model.cosine_similarities(query_vector, sents_vectors)
                 scores[np.isnan(scores)] = 0
 
-                datetime = parser.parse(str(row['created_at']))
+                datetime = parser.parse(str(row['date']))
                 meta["sentence"] = str(sents[int(np.argmax(scores))])
                 meta["score"] = str(scores[np.argmax(scores)])
                 meta["doc"] = str(row['text'])
                 meta['date'] = str(datetime.strftime("%d-%m-%Y_%H:%M:%S"))
-                meta['author'] = str(row['screen_name'])
+                meta['author'] = str(row['source'])
 
                 result.append(meta)
             final_result['result'] = result
@@ -212,17 +213,44 @@ class SampleNLP(object):
         else:
             top_n = 3
 
-        # load data from hdfs
-        self.df, tweet_df_schema = self.hdfsUtil.read_file_date(start_date=start_date, end_date=end_date,
-                                                                data_type='tweet')
-        if len(self.df) > 10000:
-            self.df = self.df.sample(n=10000)
-
-        # compute document vectors
+        # loading tweets
+        sample_size = 5000
         self.vector_list = []
-        for doc in self.df['text']:
-            vector = self.sentence_vector(doc)
-            self.vector_list.append(vector)
+        df_tweet, tweet_df_schema = self.hdfsUtil.read_file_date(start_date=start_date, end_date=end_date,
+                                                                 data_type='tweet')
+        if df_tweet is not None and len(df_tweet) > sample_size:
+            df_tweet = df_tweet.sample(n=sample_size)
+
+            # compute tweet document vectors
+            for doc in df_tweet['text']:
+                vector = self.sentence_vector(doc)
+                self.vector_list.append(vector)
+
+            df_tweet = df_tweet[["text", "screen_name", "created_at"]]
+            df_tweet.columns = ['text', "source", "date"]
+        else:
+            df_tweet = pd.DataFrame()
+
+        # loading rss
+        df_rss, res_df_schema = self.hdfsUtil.read_file_date(start_date=start_date, end_date=end_date, data_type="rss")
+        if df_rss is not None:
+            # df_rss = df_rss.sample(n=sample_size)
+            # compute rss document vectors
+            for doc in df_rss['title']:
+                vector = self.sentence_vector(doc)
+                self.vector_list.append(vector)
+
+            df_rss = df_rss[['title', 'link', 'published']]
+            df_rss.columns = ['text', "source", "date"]
+        else:
+            df_rss = pd.DataFrame()
+
+        # No result found
+        if len(df_tweet) == 0 and len(df_rss) == 0:
+            return "[]"
+
+        # Combine tweet and rss into single data frame
+        self.df = pd.concat([df_tweet, df_rss])
 
         # Search for  the closet document
         return self.search_doc(query, context, top_n)

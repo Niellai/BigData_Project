@@ -114,6 +114,10 @@ class LiveTweet(tweepy.StreamListener):
             return False
 
     def write_to_csv(self):
+        """
+        Not use any more
+        :return:
+        """
         # date_str = datetime.now().strftime("%d-%m-%Y")  # per hr file
         date_str = datetime.now().strftime("%d-%m-%Y_%H00")  # per hr file
         file_name = 'tweets_{0}.csv'.format(date_str)
@@ -133,6 +137,10 @@ class LiveTweet(tweepy.StreamListener):
             self.item_collection = []
 
     def print_records(self):
+        """
+         Not use any more
+         :return:
+        """
         # date_str = datetime.now().strftime("%d-%m-%Y")  # per hr file
         date_str = datetime.now().strftime("%d-%m-%Y_%H00")  # per hr file
         file_name = 'tweets_{0}.csv'.format(date_str)
