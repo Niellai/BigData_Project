@@ -63,7 +63,7 @@ def query():
 def sentiment():
     """
     Provide extreme sentiment from tweet post, will return top_n.
-    
+
     It can be either positive or negative
 
     {

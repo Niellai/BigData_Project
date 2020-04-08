@@ -32,7 +32,7 @@ class SampleNLP(object):
         self.sqlContext = SQLContext(sc)
         self.vector_list = []
 
-    def spark_word_cloud(self, data, max_row=1000):
+    def spark_word_cloud(self, data, max_row=500):
         """
         Faster extract tokens and count them. Will look for both tweet and rss.
         :param max_row: Limit number of rows to extract
@@ -213,13 +213,16 @@ class SampleNLP(object):
         else:
             top_n = 3
 
-        # loading tweets
+        # LOADING tweets
         sample_size = 5000
         self.vector_list = []
         df_tweet, tweet_df_schema = self.hdfsUtil.read_file_date(start_date=start_date, end_date=end_date,
                                                                  data_type='tweet')
-        if df_tweet is not None and len(df_tweet) > sample_size:
-            df_tweet = df_tweet.sample(n=sample_size)
+        if df_tweet is None:
+            df_tweet = pd.DataFrame()
+        else:
+            if len(df_tweet) > sample_size:
+                df_tweet = df_tweet.sample(n=sample_size)
 
             # compute tweet document vectors
             for doc in df_tweet['text']:
@@ -228,10 +231,8 @@ class SampleNLP(object):
 
             df_tweet = df_tweet[["text", "screen_name", "created_at"]]
             df_tweet.columns = ['text', "source", "date"]
-        else:
-            df_tweet = pd.DataFrame()
 
-        # loading rss
+        # LOADING rss
         df_rss, res_df_schema = self.hdfsUtil.read_file_date(start_date=start_date, end_date=end_date, data_type="rss")
         if df_rss is not None:
             # df_rss = df_rss.sample(n=sample_size)
@@ -247,7 +248,7 @@ class SampleNLP(object):
 
         # No result found
         if len(df_tweet) == 0 and len(df_rss) == 0:
-            return "[]"
+            return "{}"
 
         # Combine tweet and rss into single data frame
         self.df = pd.concat([df_tweet, df_rss])
