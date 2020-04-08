@@ -5,6 +5,27 @@ import wcData from "../data/sampleWordcloud";
 import sampleData from "../data/sampleBar";
 import Loader from "../components/Loader";
 
+const transformToBarData = (data) => {
+  const intData = Object.keys(data).map((i) => ({
+    [i]: data[i],
+    count: data[i],
+    word: i,
+  }));
+  intData.sort((a, b) => b.count - a.count);
+  const slicedData = intData.slice(0, 20);
+  slicedData.sort((a, b) => a.count - b.count);
+  const keyData = slicedData.map((i) => i.word);
+  const barData = slicedData.map((i, num) => {
+    delete i["count"];
+    delete i["word"];
+    return { ...i, index: num };
+  });
+  return {
+    barData: barData,
+    keyData: keyData,
+  };
+};
+
 const ScreensWordCloud = ({ setPage }) => {
   const containerRef = useRef(null);
   const [boxClass, setBoxClass] = useState("main-box");
@@ -32,7 +53,7 @@ const ScreensWordCloud = ({ setPage }) => {
             </div>
             <div className="box-container">
               <div className="bar-container">
-                <Bar data={sampleData} />
+                <Bar data={transformToBarData(wcData)} />
               </div>
               <div className="bar-container" ref={containerRef}>
                 {loaded && (

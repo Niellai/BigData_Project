@@ -5,7 +5,7 @@ import cloud from "d3-cloud";
 const WordCloud = ({ data, containerWidth }) => {
   const width = containerWidth ? containerWidth : 500;
   const height = containerWidth ? containerWidth : 500;
-  const fill = d3.scaleOrdinal(d3.schemeCategory10);
+  const fill = d3.scaleOrdinal(d3.schemeTableau10);
 
   useEffect(() => {
     const draw = (words) => {
@@ -50,7 +50,7 @@ const WordCloud = ({ data, containerWidth }) => {
       )
       .padding(5)
       .rotate(function () {
-        return ~~(Math.random() * 4) * 45;
+        return ~~(Math.random() * 2) * 45;
       })
       .font("Impact")
       .fontSize(function (d) {
