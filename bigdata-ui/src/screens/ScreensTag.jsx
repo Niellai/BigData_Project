@@ -23,7 +23,7 @@ const transformTag = (tag, index) => {
     index,
     author,
     Content,
-    Date: parseInt((new Date(formattedDate).getTime() / 1000).toFixed(0)),
+    Date: parseInt(new Date(formattedDate).getTime().toFixed(0)),
     compound: score,
     label: score > 0 ? 1 : score < 0 ? -1 : 0,
   };

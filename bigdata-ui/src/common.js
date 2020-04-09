@@ -41,3 +41,20 @@ export const getQuery = async (start_date, end_date, context, query) => {
     return {};
   }
 };
+
+export const getExtreme = async (start_date, end_date, is_positive) => {
+  try {
+    const baseUrl = process.env.REACT_APP_BASEURL;
+    const body = { start_date, end_date, is_positive, top_n: 10 };
+    const response = await fetch(`${baseUrl}/sentiment`, {
+      method: "post",
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+    });
+    const rjson = await response.json();
+    return rjson;
+  } catch (error) {
+    console.log(error);
+    return {};
+  }
+};
